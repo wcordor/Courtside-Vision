@@ -15,8 +15,8 @@ export async function GET() {
   }
 
   try {
-    const response = await fetch('https://api.balldontlie.io/v1/teams', {
-        headers: { 'Authorization': 'YOUR_KEY' }
+    const response = await fetch('https://nba.balldontlie.io/v1/teams', {
+        headers: { 'Authorization': '9cc80185-3a7e-4491-8411-0215c0dd3fac' }
     });
 
     const errorText = await response.text(); // Get the raw error message
