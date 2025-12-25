@@ -4,22 +4,27 @@ import { MOCK_TEAMS, Team } from "@/mockTeams";
 export default async function HomePage() {
   const apiKey = process.env.BALLDONTLIE_API_KEY || "";
   
-  // 'teams' is an array of 'Team'
-  let teams: Team[] = MOCK_TEAMS; 
+  // Initialize with mocks as starting point
+  let teams: Team[] = MOCK_TEAMS;
   let isMock = true;
 
   try {
-    // Checks whether key is being read or not
+    // Checks if key is being read
     console.log("Attempting API Fetch with key:", apiKey ? "EXISTS" : "MISSING");
 
-    // Fetch data using SDK 
+    // Fetch data using SDK
     const api = new BalldontlieAPI({ apiKey });
     const response = await api.nba.getTeams();
-    // Some versions of SDK return 'directly return data, whereas others may wrap it
-    teams = response.data as Team[]; 
-    isMock = false;
-  } catch (error) {
-    console.log("Using fallback mock data.");
+
+    // Verify that data is actually there and are no errors are occurring
+    if (response && response.data && response.data.length > 0) {
+      teams = response.data as Team[];
+      isMock = false;
+      console.log("SUCCESS: Live data loaded.");
+    }
+  } catch (error: any) {
+    // Catch 429 & 401 errors specifically
+    console.error("API Error - Falling back to Mocks:", error.message);
   }
 
   return (

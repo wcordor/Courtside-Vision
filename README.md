@@ -19,3 +19,7 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 - [ ] Live Matchup Dashboard (In Progress)
 - [ ] Mead-to-Head Player Comparison Tool
 - [ ] Responsive UI Polish with Tailwind CSS
+
+## Hybrid Data Resilience
+
+To ensure the application remains functional despite the 5 req/min API limit, I implemented a Conditional Fetching Strategy. The app attempts to authenticate via environment variables; if it detects a failure (401 or 429), it seamlessly transitions to a local JSON dataset. This prevents the UI from crashing and allows for uninterrupted development and demonstration.
