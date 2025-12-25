@@ -30,7 +30,7 @@
 
 While previous logs identified the 429 (Too Many Requests) as the primary bottleneck, further investigation revealed that the rate-limiting was a symptom of a deeper environment variable issue.
 
-### Anonymous Limit Trap
+### Anonymous Limit Case
 
 - **Loop:** Noticed that even when making a single manual request, a 429 or 401 would still trigger.
 - **Server-Side Diagnostics:** Added `console.log` checks to the server-side fetch logic. Discovered that `process.env.BALLDONTLIE_API_KEY` was returning `undefined`.
