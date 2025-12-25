@@ -2,7 +2,7 @@
 
 ## What is it?
 
-Courtside Vision is an NBA analytics dashboard designed to help users compare team matchups and player performance using the BALLDONTLIE API. It leverages TypeScript for robust data handling and features a custom fallback system to ensure a seamless user experience even when hitting external API rate limits.
+Courtside Vision is an NBA analytics dashboard designed to help users compare team match-ups and player performance using the BALLDONTLIE API. It leverages TypeScript for robust data handling and features a custom fallback system to ensure a seamless user experience even when hitting external API rate limits.
 
 ## Tech Stack
 

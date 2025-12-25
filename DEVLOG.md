@@ -6,9 +6,9 @@
 
 - **404 (Not Found):** Initially called a non-existent endpoint. Fixed by auditing SDK documentation and ensuring request path matched V2 API specifications.  
 - **401 (Unauthorized):** Received HTML pages instead of JSON when calling endpoint. Updated code by adding conditions to stop JSON from crashing. Error 429 unmasked as real error.
-- **429 (Too Many Requests):** BALLDONTLIE API Free Tier subsription allowed for 5 requests per minute. Next.js was making multiple requests per call, essentially using up request limit. Implemented mock data as fallback for failed call.
+- **429 (Too Many Requests):** BALLDONTLIE API Free Tier subscription allowed for 5 requests per minute. Next.js was making multiple requests per call, essentially using up request limit. Implemented mock data as fallback for failed call.
 
-#### Debuggging Milestone: Unmasking the 429
+#### Debugging Milestone: Unmasking the 429
 
 - **Symptom:** `Unexpected token '<', "<!doctype "... is not valid JSON`
 - **Discovery:** App was trying to parse HTML error page ("Too Many Requests" message) as JSON.
@@ -19,7 +19,7 @@
 - **Conflict:** Checked "Add a README" and "Add a .gitignore" when first created repository on GitHub. Push command was rejected since Git has initial commit that doesn't exist of project PC.
 - **Strategy:**
 
-    1. Used `git pull origin main --allow-unrelated-histories` to bridge local repo with intial repo on GitHub
+    1. Used `git pull origin main --allow-unrelated-histories` to bridge local repo with initial repo on GitHub
 
     2. Ran `git checkout --ours .gitignore` and `git checkout --ours README.md`, so that Git keeps developer version of files.
         - Using `git add .gitignore README.md` resolved issue finally.
