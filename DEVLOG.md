@@ -41,3 +41,9 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 1. **Environment Correction:** Key was initially stored in `env.local` file, which Next.js was not registering in server process. Created standard `.env` file to store the key, where it was successfully registered ("Key Exists")
 2. **Hard Reset:** Deleted `.next` directory to clear sever-side data cache. Next.js had saved and displayed previous 429 error page without actually re-attempting API call.
 3. **Outcome:** Authorization was successful (Status 200). App can now fetch real NBA season data without anonymous 429 error appearing.
+
+## 27 Dec 2025: Repository Refactoring & Matchboard Architecture
+
+- **Git Maintenance:** Optimized commit history and finalized `.gitignore` configurations to align with production-ready standards.
+- **Data Strategy:** Designed `mockGames` system to serve as a fail-safe, ensuring UI stability during API rate-limiting or outages.
+- **Time Fix:** Implemented `timeZone: 'UTC'` logic within `toLocaleTimeString` method to resolve 5-hour time shift in game schedules.
