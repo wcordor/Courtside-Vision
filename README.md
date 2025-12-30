@@ -16,7 +16,9 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 - [x] Initial Project Setup & Next.js Boilerplate
 - [x] API AUthentication & SDK Integration
 - [x] Data Resilience Layer
-- [x] Live Matchup Dashboard UI (Prototyped with Mock Data)
+- [x] Live Matchup Dashboard UI (Restructured for Live Data)
+- [x] Integrated Live SDK fetching with Single/Multiple Game logic
+[ ] Re-implement Single/Multiple Game Logic (Optimization)
 - [ ] Head-to-Head Player Comparison Tool
 - [ ] Responsive UI Polish with Tailwind CSS
 
@@ -25,3 +27,4 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 To ensure the application remains functional despite the 5 req/min API limit, I implemented a Conditional Fetching Strategy. The app attempts to authenticate via environment variables; if it detects a failure (401 or 429), it seamlessly transitions to a local JSON dataset. This prevents the UI from crashing and allows for uninterrupted development and demonstration.
 
 - **Data Integrity:** Implemented UTC-aware time formatting to ensure game schedules remain accurate across various client locales.
+- **UI Hierarchy:** Re-aligned the dashboard according to original blueprint, moving live match-ups to the top and utilizing semantic HTML for improved structure.

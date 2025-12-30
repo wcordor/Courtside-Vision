@@ -47,3 +47,15 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 - **Git Maintenance:** Optimized commit history and finalized `.gitignore` configurations to align with production-ready standards.
 - **Data Strategy:** Designed `mockGames` system to serve as a fail-safe, ensuring UI stability during API rate-limiting or outages.
 - **Time Fix:** Implemented `timeZone: 'UTC'` logic within `toLocaleTimeString` method to resolve 5-hour time shift in game schedules.
+
+## 30 Dec 2025: Live Dashboard & Layout Restructuring
+
+### Live Data Pivot
+
+- **SDK Integration:** Successfully transitioned from mock-only displays to live API fetching using getGames().
+- **Historical Data Handling:** Identified that unfiltered API calls default to 1946 data. Resolved by passing specific date objects { dates: ["2025-12-30"] } to the SDK to target more recent gameday.
+
+### UI & Architecture
+
+**Semantic Refactor:** Replaced generic div containers with `<header>` and `<section>` tags to improve code readability and accessibility.
+**Information Hierarchy:** Moved the Matchboard to the top of the page to prioritize real-time scores.
