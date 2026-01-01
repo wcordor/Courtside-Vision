@@ -11,16 +11,15 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 - Tailwind
 - @balldontlie/sdk
 
-## Status: Work in Progress
+## Roadmap & Progress
 
-- [x] Initial Project Setup & Next.js Boilerplate
-- [x] API AUthentication & SDK Integration
-- [x] Data Resilience Layer
-- [x] Live Matchup Dashboard UI (Restructured for Live Data)
-- [x] Integrated Live SDK fetching with Single/Multiple Game logic
-[ ] Re-implement Single/Multiple Game Logic (Optimization)
-- [ ] Head-to-Head Player Comparison Tool
-- [ ] Responsive UI Polish with Tailwind CSS
+- [x] **Core Infrastructure:** Next.js setup with TypeScript and SDK integration.
+- [x] **Data Resilience:** Hybrid Mock/Live data system to bypass 429 Rate Limits.
+- [x] **Polymorphic Data Handling:** Engineered a normalization layer for Single (Object) vs. Multiple (Array) game responses.
+- [ ] **Dynamic Matchboard:** Real-time score updates and game-clock synchronization.
+- [ ] **Advanced Filtering:** Team-specific and date-range querying for the dashboard.
+- [ ] **Comparison Engine:** Head-to-head player performance analytics tool.
+- [ ] **Mobile-First Design:** Fully responsive UI refactor using Tailwind CSS.
 
 ## Hybrid Data Resilience
 

@@ -5,6 +5,7 @@ export interface Game {
   season: number;
   status: string;
   period: number;
+  time: string;
   postseason: boolean;
   home_team_score: number;
   visitor_team_score: number;
@@ -51,8 +52,9 @@ export const MOCK_GAMES: Game[] = [
         id: 1,
         date: "2025-12-26",
         season: 2025,
-        status: "Regular Season",
+        status: "Final",
         period: 4,
+        time: "Final",
         postseason: false,
         home_team_score: 122,
         visitor_team_score: 140,

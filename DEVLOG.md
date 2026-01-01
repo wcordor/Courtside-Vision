@@ -59,3 +59,16 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 
 **Semantic Refactor:** Replaced generic div containers with `<header>` and `<section>` tags to improve code readability and accessibility.
 **Information Hierarchy:** Moved the Matchboard to the top of the page to prioritize real-time scores.
+
+## 31 Dec 2025: Polymorphic Data Normalization
+
+### Technical Challenge
+
+- Discovered a critical crash-point when transitioning from `getGames()` (List) to `getGame()` (Single Object).
+  - Matchboard is designed for array iteration (`.map`) and was incompatible with single-object response from the SDK's specific game endpoint.
+
+### Solution: The Normalization Pattern
+
+- **Architecture:** Implemented a ternary check using `Array.isArray()` and  `gameResponse.data` to force consistent data shape.
+- **Type Safety:** Utilized TypeScript casting to ensure the normalized array adhered to the Game[] interface, preventing "Property undefined" errors in the render cycle.
+- **UX Polish:** Refined JSX syntax for conditional string interpolation in game-clock displays, ensuring "Final" statuses don't redundantly display.
