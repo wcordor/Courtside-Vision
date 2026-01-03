@@ -26,21 +26,42 @@ export default async function HomePage() {
       console.log("SUCCESS: Live data loaded.");
     }
 
-    const gameResponse = await api.nba.getGame(15907925);
+    const gameResponse = await api.nba.getGames({ dates: ["2026-01-02"]});
     console.log("Response Type:", typeof gameResponse) // Diagnostic: Identify if SDK response is a 'Box' (wrapper) or the 'Item' (game object)
     
-    // Normalization: Extract Game object from response wrapper
+    // If gameResponse data exists, check if it's an array. If not, wrap it in [].
     const dataToUse = gameResponse.data ? (Array.isArray(gameResponse.data) ? gameResponse.data : [gameResponse.data]) : [gameResponse];
 
     if (dataToUse && dataToUse.length > 0) {
       games = (dataToUse as unknown) as Game[];
       mockGames = false;
-      console.log("DEBUG GAME:", gameResponse);
+      console.log("Full Game Data:", JSON.stringify(gameResponse, null, 2));
     }
 
   } catch (error: any) {
     // Catch 429 & 401 errors specifically
     console.error("API Error - Falling back to Mocks:", error.message);
+  }
+
+  const getGameStatus = (game: any) => {
+    if (game.period === 0) return "Scheduled";
+    if (game.status === "Final") return "Final";
+    return `Q${game.period} - ${game.time}`;
+  };
+
+  const isFuture = (game: any) => {
+    if (game.period === 0) return true;
+    return false;
+  }
+
+  const isLive = (game: any) => {
+    if (game.status !== "Final" && game.period !== 0) return true;
+    return false;
+  }
+
+  const isFinal = (game: any) => {
+    if (game.status === "Final") return true;
+    return false;
   }
 
   return (
@@ -74,7 +95,7 @@ export default async function HomePage() {
             <option>All Teams</option> <option>Atlanta Hawks</option> <option>Specific Date</option> {/* add in all 30 teams */}
           </select>
 
-          <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 8px', cursor: 'pointer',
+          <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 12px', cursor: 'pointer',
             textAlign: 'center', borderRadius: '4px' }}>
             <option>Start Time</option> <option>Score</option>
           </select>
@@ -98,30 +119,30 @@ export default async function HomePage() {
           }}>
             {/* Header: Status */}
             <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#aaa', marginBottom: '1rem', textTransform: 'uppercase' }}>
-              {game.status} {game.time !== game.status ? `| ${game.time}` : ''} - Period {game.period}
+              {getGameStatus(game)}
             </div>
 
             {/* Home Team */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-              <span style={{ fontWeight: '600', fontSize: '1.1rem' }}>{game.home_team?.full_name}</span>
-              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{game.home_team_score}</span>
+              <span style={{ fontWeight: '600', fontSize: '1.1rem' }}>{game.home_team.full_name}</span>
+              {!isFuture(game) && <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{game.home_team_score}</span>}
             </div>
 
             {/* Visitor Team */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontWeight: '600', fontSize: '1.1rem' }}>{game.visitor_team?.full_name}</span>
-              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{game.visitor_team_score}</span>
+              <span style={{ fontWeight: '600', fontSize: '1.1rem' }}>{game.visitor_team.full_name}</span>
+              {!isFuture(game) && <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{game.visitor_team_score}</span>}
             </div>
 
-            {/* Footer: Date */}
-            <div style={{ marginTop: '1rem', borderTop: '1px solid #333', paddingTop: '0.5rem', fontSize: '0.8rem', color: '#888' }}>
-              {game.datetime && !isNaN(Date.parse(game.datetime)) 
-                ? `Scheduled: ${new Date(game.datetime).toLocaleTimeString('en-US', { 
-                  hour: '2-digit', 
+            {/* Footer */}
+            <div style={{ marginTop: '1rem', borderTop: '1px solid #333', paddingTop: '0.5rem', fontSize: '0.8rem', color: '#888', textAlign: 'center' }}>
+              {(!isFinal(game) && !isLive(game)) ? (game.datetime && !isNaN(Date.parse(game.datetime)) ? `${new Date(game.datetime).toLocaleTimeString('en-US', { 
+                  hour: 'numeric', 
                   minute: '2-digit', 
-                  timeZone: 'UTC' 
+                  timeZoneName: 'short' 
                   })}`
                 : `Date: ${game.date}` 
+                ) : <span style={{ fontSize: '0.8rem', color: '#aaa', marginBottom: '4rem' }}>Final Score</span>
               }
               </div>
             </div>

@@ -72,3 +72,14 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 - **Architecture:** Implemented a ternary check using `Array.isArray()` and  `gameResponse.data` to force consistent data shape.
 - **Type Safety:** Utilized TypeScript casting to ensure the normalized array adhered to the Game[] interface, preventing "Property undefined" errors in the render cycle.
 - **UX Polish:** Refined JSX syntax for conditional string interpolation in game-clock displays, ensuring "Final" statuses don't redundantly display.
+
+## 3 Jan 2026: UX Contextualization & Logic Resilience
+
+### Feature: Context-Aware UI Logic
+
+- Implemented conditional rendering to optimize information hierarchy of Matchboard
+  - Reduced cognitive load by filtering out non-contextual data points.
+
+### Architectural Win
+
+- Refined Matchboard footer using Ternary Operator to handle state switch between "Tip-off Time" and "Final Score" displays, improving code readability.
