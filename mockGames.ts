@@ -1,9 +1,10 @@
+import { Team } from "@/mockTeams";
 // Shape of Game object 
 export interface Game {
   id: number;
   date: string;
   season: number;
-  status: string;
+  status: "Final" | "Scheduled" | string;
   period: number;
   time: string;
   postseason: boolean;
@@ -29,22 +30,8 @@ export interface Game {
   visitor_timeouts_remaining: number | null;
   visitor_in_bonus: boolean | null;
   ist_stage: string | null;
-  home_team: {
-    full_name: string;
-    abbreviation: string;
-    conference: string;
-    city: string;
-    division: string;
-    name: string;
-  },
-  visitor_team: {
-    full_name: string;
-    abbreviation: string;
-    conference: string;
-    city: string;
-    division: string;
-    name: string;
-  }
+  home_team: Team;
+  visitor_team: Team;
 }
 
 export const MOCK_GAMES: Game[] = [
@@ -79,6 +66,7 @@ export const MOCK_GAMES: Game[] = [
         visitor_in_bonus: null,
         ist_stage: null,
         home_team: {
+            id: 1,
             full_name: "Indiana Pacers",
             abbreviation: "IND",
             conference: "East",
@@ -87,6 +75,7 @@ export const MOCK_GAMES: Game[] = [
             name: "Pacers"
         },
         visitor_team: {
+            id: 2,
             full_name: "Boston Celtics",
             abbreviation: "BOS",
             conference: "East",

@@ -83,3 +83,13 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 ### Architectural Win
 
 - Refined Matchboard footer using Ternary Operator to handle state switch between "Tip-off Time" and "Final Score" displays, improving code readability.
+
+## 6 Jan 2026: Architectural Refactor & State-Driven Filtering
+
+- **Architecture:** Transitioned from a pure Server Component to a Hybrid Model.
+  - Created a `dashboard.tsx` Client Component to handle user interactions while keeping `page.tsx` as the data-fetching layer.
+- **State Management:** Implemented `useState` to manage `searchQuery` and `selectedDate`.
+  - Allows for real-time UI updates without additional server round-trips.
+- **"Date-Shift" Resolution:** Debugged a timezone offset issue where games appeared a day behind
+  - Resolved by appending `T00:00:00` to date strings, forcing the browser to interpret dates in the user's local timezone
+- **Advanced Filtering:** Engineered a multi-clause `.filter()` logic that aggregates search input and date selection to narrow down game results dynamically.
