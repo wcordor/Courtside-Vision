@@ -3,6 +3,8 @@ import { MOCK_TEAMS, Team } from "@/mockTeams";
 import { MOCK_GAMES, Game } from "@/mockGames";
 import Dashboard from "./dashboard";
 
+export const revalidate = 60; // Refresh data every 60 seconds at most
+
 export default async function HomePage() {
   const apiKey = process.env.BALLDONTLIE_API_KEY || "";
   
@@ -27,13 +29,17 @@ export default async function HomePage() {
       console.log("SUCCESS: Live data loaded.");
     }
 
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(today.getDate() - 1);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
+    const getRelativeDate = (offset: number) => {
+      const date = new Date();
+      date.setDate(date.getDate() + offset);
+      return date.toISOString().split('T')[0];
+    }
 
-    const dateStrings = [yesterday, today, tomorrow].map(d => d.toISOString().split('T')[0]);
+    const today = getRelativeDate(0);
+    const yesterday = getRelativeDate(-1);
+    const tomorrow = getRelativeDate(1);
+
+    const dateStrings = [yesterday, today, tomorrow];
 
     const dates = dateStrings;
     const gameResponse = await api.nba.getGames({ dates });
@@ -47,14 +53,11 @@ export default async function HomePage() {
       mockGames = false;
     }
 
-    
-
   } catch (error: any) {
     // Catch 429 & 401 errors specifically
     console.error("API Error - Falling back to Mocks:", error.message);
   }
 
-  
-
   return <Dashboard initialGames={games} isUsingMock={mockGames}/>
+
 }

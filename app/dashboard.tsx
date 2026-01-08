@@ -2,19 +2,31 @@
 import { Game } from "@/mockGames";
 import { useState } from "react";
 
+const getRelativeDate = (offset: number) => {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return date.toISOString().split('T')[0];
+};
 
 export default function Dashboard({ initialGames, isUsingMock }: { initialGames: Game[], isUsingMock: boolean }) {
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDate, setSelectedDate] = useState("2026-01-06");
+  const [selectedDate, setSelectedDate] = useState(getRelativeDate(0));
+  const [selectedTeam, setSelectedTeam] = useState("All Teams");
+  const [isCustomDate, setIsCustomDate] = useState(false);
 
   const filteredGames = initialGames.filter(game => {
-    const matchesSearch = game.home_team.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    game.visitor_team.full_name.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesDate = game.date.startsWith(selectedDate);
+    console.log("Comparing:", game.date, "to", selectedDate);
 
-    return matchesSearch && matchesDate;
+    const matchesSearch = game.home_team.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      game.visitor_team.full_name.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesDate = game.date.slice(0, 10) === selectedDate;
+
+    const matchesTeam = selectedTeam === "All Teams" || game.home_team.full_name === selectedTeam ||
+      game.visitor_team.full_name === selectedTeam;
+
+    return matchesSearch && matchesDate && matchesTeam;
   });
   
   const getGameStatus = (game: Game) => {
@@ -38,6 +50,18 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
     return false;
   }
 
+  const handleDateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+
+    if (value === "custom") {
+      setIsCustomDate(true);
+    }
+    else {
+      setIsCustomDate(false);
+      setSelectedDate(value);
+    }
+  };
+
   return (
 
     <main style={{ padding: '2rem', fontFamily: 'sans-serif', backgroundColor: '#121212', color: '#ffffff', minHeight: '100vh' }}>
@@ -59,19 +83,21 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
 
       <section style={{ borderBottom: '0rem' }}>
         
-          <div style={{ display: 'flex', gap: '1rem', padding: '1rem 0' }}>
+        <div style={{ display: 'flex', gap: '1rem', padding: '1rem 0' }}>
 
-            <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 8px', cursor: 'pointer',
-              textAlign: 'center', textIndent: '5px', width: '130px', borderRadius: '4px' }} value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
-              <option value="2026-01-06">Today</option> 
-              <option value="2026-01-05">Yesterday</option>
-              <option value="2026-01-07">Tomorrow</option> 
-              <option>Specific Date</option>
-            </select>
+          <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 8px', cursor: 'pointer',
+            textAlign: 'center', borderRadius: '4px' }} value={isCustomDate ? "custom" : selectedDate} onChange={handleDateChange}>
+              <option value={getRelativeDate(-1)}>Yesterday</option><option value={getRelativeDate(0)}>Today</option><option value={getRelativeDate(1)}>Tomorrow</option>
+                <option value="custom">Specific Date</option>
+          </select>
+
+          {isCustomDate && (
+            <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}></input>
+          )}
           
           <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 8px', cursor: 'pointer',
             textAlign: 'center', borderRadius: '4px' }}>
-            <option>All Teams</option> <option>Atlanta Hawks</option> <option>Specific Date</option> {/* add in all 30 teams */}
+            <option>All Teams</option><option>Atlanta Hawks</option> <option>Specific Date</option> {/* add in all 30 teams */}
           </select>
 
           <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 16px', cursor: 'pointer',
@@ -115,13 +141,15 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
 
             {/* Footer */}
             <div style={{ marginTop: '1rem', borderTop: '1px solid #333', paddingTop: '0.5rem', fontSize: '0.8rem', color: '#888', textAlign: 'center' }}>
-              {(!isFinal(game) && !isLive(game)) ? (game.datetime && !isNaN(Date.parse(game.datetime)) ? `${new Date(game.datetime).toLocaleTimeString('en-US', { 
+              {isFinal(game) ? <span style={{ fontSize: '0.8rem', color: '#aaa', marginBottom: '4rem' }}>Final Score</span> :
+                isLive(game) ? <span style={{ fontSize: '0.8rem', color: '#f00', marginBottom: '4rem' }}>Live</span> :
+                (game.datetime && !isNaN(Date.parse(game.datetime)) ? `${new Date(game.datetime).toLocaleTimeString('en-US', { 
                   hour: 'numeric', 
                   minute: '2-digit', 
                   timeZoneName: 'short' 
                   })}`
                 : `Date: ${game.date}` 
-                ) : <span style={{ fontSize: '0.8rem', color: '#aaa', marginBottom: '4rem' }}>Final Score</span>
+                )
               }
               </div>
             </div>

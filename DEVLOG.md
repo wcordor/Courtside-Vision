@@ -93,3 +93,13 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 - **"Date-Shift" Resolution:** Debugged a timezone offset issue where games appeared a day behind
   - Resolved by appending `T00:00:00` to date strings, forcing the browser to interpret dates in the user's local timezone
 - **Advanced Filtering:** Engineered a multi-clause `.filter()` logic that aggregates search input and date selection to narrow down game results dynamically.
+
+## 8 Jan 2026: Hybrid UI Selection & Data Standardization
+
+- **Incremental Static Regeneration (ISR):** Integrated `export const revalidate = 60;` to ensure the dashboard stays current without requiring manual redeploys
+  - Allows server to fetch fresh NBA scores in the background every minute, providing a "live" feel while maintaining the speed of a static site.
+- **Hybrid Date Selection:** Applied dynamic `<select>` menu paired with a conditional `input[type="date"]`.
+  - Allows for a clean UI that defaults to common relative dates (Today/Yesterday/Tomorrow) while supporting deep-calendar queries.
+- **String Mismatch in Filtering:** Identified a bug where the HTML5 Date Input string (YYYY-MM-DD) failed to match the API's ISO-8601 string despite identical date values.
+  - **Solution: Standardization Layer:** Implemented `.slice(0, 10)` normalization step within the `.filter()` method
+    - Ensures that the state and API data are compared as standardized 10-character strings, regardless of trailing UTC timestamps.
