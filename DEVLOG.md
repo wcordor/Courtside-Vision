@@ -103,3 +103,11 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 - **String Mismatch in Filtering:** Identified a bug where the HTML5 Date Input string (YYYY-MM-DD) failed to match the API's ISO-8601 string despite identical date values.
   - **Solution: Standardization Layer:** Implemented `.slice(0, 10)` normalization step within the `.filter()` method
     - Ensures that the state and API data are compared as standardized 10-character strings, regardless of trailing UTC timestamps.
+
+## 9 Jan 2026: Time-Zone Synchronization & Dynamic Fetching Architecture
+
+- **Date Drift Resolution:** Verified and anchored the `getRelativeDate` utility to `America/New_York` using `toLocaleDateString`.
+- **Logic Verification:** Confirmed via server logs that the `T00:00:00` ISO-string formatting correctly synchronizes the application state with the NBA league calendar, eliminating UTC-rollover mismatch.
+- **Server Action Implementation:** Created a `getGamesByDate` server-side action to bridge the gap between Client Component and API
+  - Enables secure, on-demand data fetching for any date in the archives without exposing API keys.
+- **State Merging Pattern:** Implemented "Master List" logic using Spread Operator (`...`) to combine initial server-side data with dynamic client-side fetches, ensuring a seamless user experience when navigating the calendar.

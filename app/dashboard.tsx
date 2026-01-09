@@ -1,10 +1,20 @@
 'use client';
 import { Game } from "@/mockGames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const getRelativeDate = (offset: number) => {
-  const date = new Date();
+
+  // Today's date according to EST
+  const ETString = new Date().toLocaleDateString('en-CA', {
+    timeZone: 'America/New_York'
+  });
+
+  // 'T00:00:00' ensures timezone doesn't shift
+  const date = new Date(`${ETString}T00:00:00`);
+
   date.setDate(date.getDate() + offset);
+
+  // Returns date in YYYY-MM-DD format
   return date.toISOString().split('T')[0];
 };
 
@@ -14,8 +24,12 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
   const [selectedDate, setSelectedDate] = useState(getRelativeDate(0));
   const [selectedTeam, setSelectedTeam] = useState("All Teams");
   const [isCustomDate, setIsCustomDate] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [extraGames, setExtraGames] = useState<Game[]>([]);
 
-  const filteredGames = initialGames.filter(game => {
+  const allGames = [...initialGames, ...extraGames];
+
+  const filteredGames = allGames.filter(game => {
     console.log("Comparing:", game.date, "to", selectedDate);
 
     const matchesSearch = game.home_team.full_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -61,6 +75,28 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
       setSelectedDate(value);
     }
   };
+
+  useEffect(() => {
+
+    // Checks if games are loaded for selectedDate
+    const hasData = initialGames.some(game => game.status.startsWith(selectedDate));
+
+    if (!hasData) {
+      const getMoreGames = async () => {
+        setIsLoading(true);
+        try {
+          console.log("Fetching new data for:", selectedDate);
+
+        } catch (error) {
+          console.error("Fetch failed", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+
+      getMoreGames();
+    }
+  }, [selectedDate, initialGames]);
 
   return (
 
@@ -108,6 +144,18 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
         </div>
 
       </section>
+
+      {isLoading && (
+        <div className="text-center p-4 animate pulse">
+          Searching archives for {selectedDate}...
+        </div>
+      )}
+
+      {(!isLoading && filteredGames.length === 0) && (
+        <div className="text-center p-4">
+          No games found for this date.
+        </div>
+      )}
 
       <div style={{ 
         display: 'grid', 

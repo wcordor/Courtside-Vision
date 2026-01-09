@@ -17,8 +17,9 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 - [x] **Data Resilience:** Hybrid Mock/Live data system to bypass 429 Rate Limits.
 - [x] **Polymorphic Data Handling:** Engineered a normalization layer for Single (Object) vs. Multiple (Array) game responses.
 - [x] **Dynamic Matchboard:** Engineered context-aware components that dynamically render scores, clocks, and statuses based on real-time game states.
-- [/-] **Advanced Filtering:** Team-specific and date-range querying for the dashboard.
+- [ ] **Advanced Filtering:** Team-specific and date-range querying for the dashboard.
   - *Completed: Built a context-aware filtering engine that standardizes disparate date formats (ISO-8601 vs. HTML5) into unified queryable state.*
+- [ ] **On-Demand Data Retrieval:** Implementing Server Actions to fetch historical data dynamically as users navigate the calendar.
 - [ ] **Matchup Trend & Comparison Engine:** Comprehensive analysis tool that aggregates rolling 5-game performance metrics and head-to-head opponent stats. This engine utilizes multiple asynchronous data streams to provide a "Matchup Strength" indicator.
 - [ ] **Mobile-First Design:** Fully responsive UI refactor using Tailwind CSS.
 

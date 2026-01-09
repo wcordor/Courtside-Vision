@@ -1,5 +1,4 @@
 import { BalldontlieAPI } from "@balldontlie/sdk";
-import { MOCK_TEAMS, Team } from "@/mockTeams";
 import { MOCK_GAMES, Game } from "@/mockGames";
 import Dashboard from "./dashboard";
 
@@ -9,8 +8,6 @@ export default async function HomePage() {
   const apiKey = process.env.BALLDONTLIE_API_KEY || "";
   
   // Initialize with mocks as starting point
-  let teams: Team[] = MOCK_TEAMS;
-  let mockTeams = true;
   let games: Game[] = MOCK_GAMES;
   let mockGames = true;
 
@@ -20,14 +17,6 @@ export default async function HomePage() {
 
     // Fetch data using SDK
     const api = new BalldontlieAPI({ apiKey });
-    const teamResponse = await api.nba.getTeams();
-
-    // Verify that team data is actually there and are no errors are occurring
-    if (teamResponse && teamResponse.data && teamResponse.data.length > 0) {
-      teams = teamResponse.data as Team[];
-      mockTeams = false;
-      console.log("SUCCESS: Live data loaded.");
-    }
 
     const getRelativeDate = (offset: number) => {
       const date = new Date();
