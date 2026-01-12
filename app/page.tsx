@@ -19,10 +19,16 @@ export default async function HomePage() {
     const api = new BalldontlieAPI({ apiKey });
 
     const getRelativeDate = (offset: number) => {
-      const date = new Date();
+
+      const ETString = new Date().toLocaleDateString('en-CA', {
+        timeZone: 'America/New_York'
+      });
+
+      const date = new Date(`${ETString}T00:00:00`);
       date.setDate(date.getDate() + offset);
+
       return date.toISOString().split('T')[0];
-    }
+    };
 
     const today = getRelativeDate(0);
     const yesterday = getRelativeDate(-1);

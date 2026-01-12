@@ -111,3 +111,18 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 - **Server Action Implementation:** Created a `getGamesByDate` server-side action to bridge the gap between Client Component and API
   - Enables secure, on-demand data fetching for any date in the archives without exposing API keys.
 - **State Merging Pattern:** Implemented "Master List" logic using Spread Operator (`...`) to combine initial server-side data with dynamic client-side fetches, ensuring a seamless user experience when navigating the calendar.
+
+## 12 Jan 2026: State Optimization & Hook Stabilization
+
+### Issue: Duplicate Keys & Memory Leaks
+
+- **Symptom:** React warnings regarding duplicate keys in the Matchboard when navigating between specific dates.
+- **Cause:** Overlapping data between `initialGames` (SSR) and `extraGames` (Client) caused ID collisions.
+- **Solution:** Declarative De-duplication: Refactored the state merging logic from an imperative `.forEach` push to a declarative `Map` constructor.
+  - *Insight:* Using `new Map().values()` is significantly more performant than `.find()` or `.filter()` for large datasets as it leverages hash-map lookups.
+
+### Issue: React Hook Dependency Mismatch
+
+- **Symptom:** Console error: "The final argument passed to useEffect changed size between renders."
+- **Discovery:** Changing the dependency array from `[selectedDate, initialGames]` to `[selectedDate]` mid-session violated the Rule of Hooks regarding constant array size.
+- **Resolution:** Standardized the effect trigger to watch `selectedDate` exclusively and performed a hard reset to clear the hook's memory buffer.

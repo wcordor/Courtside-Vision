@@ -28,7 +28,9 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
   const [isLoading, setIsLoading] = useState(false);
   const [extraGames, setExtraGames] = useState<Game[]>([]);
 
-  const allGames = [...initialGames, ...extraGames];
+  const allGames = Array.from(
+    new Map([...initialGames, ...extraGames].map(game => [game.id, game])).values()
+  );
 
   const filteredGames = allGames.filter(game => {
     console.log("Comparing:", game.date, "to", selectedDate);
@@ -77,10 +79,10 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
     }
   };
 
-  /*useEffect(() => {
+  useEffect(() => {
 
     // Checks if games are loaded for selectedDate
-    const hasData = initialGames.some(game => game.status.startsWith(selectedDate));
+    const hasData = allGames.some(game => game.date.includes(selectedDate));
 
     if (!hasData) {
       const getMoreGames = async () => {
@@ -107,7 +109,7 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
 
       getMoreGames();
     }
-  }, [selectedDate, initialGames]);*/
+  }, [selectedDate]);
 
   return (
 

@@ -23,12 +23,17 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 - [ ] **Matchup Trend & Comparison Engine:** Comprehensive analysis tool that aggregates rolling 5-game performance metrics and head-to-head opponent stats. This engine utilizes multiple asynchronous data streams to provide a "Matchup Strength" indicator.
 - [ ] **Mobile-First Design:** Fully responsive UI refactor using Tailwind CSS.
 
-## Hybrid Data Resilience
+## Hybrid Data Resilience & Polymorphic Data Handling
 
-To ensure the application remains functional despite the 5 req/min API limit, I implemented a Conditional Fetching Strategy. The app attempts to authenticate via environment variables; if it detects a failure (401 or 429), it seamlessly transitions to a local JSON dataset. This prevents the UI from crashing and allows for uninterrupted development and demonstration.
+To ensure 100% uptime despite the strict 5 req/min API limit, I engineered a multi-layered data strategy:
 
-- **Data Integrity:** Implemented UTC-aware time formatting to ensure game schedules remain accurate across various client locales.
-- **UI Hierarchy:** Re-aligned the dashboard according to original blueprint, moving live match-ups to the top and utilizing semantic HTML for improved structure.
+- **Polymorphic Data Normalization:** Implemented a de-duplication layer using JavaScript `Map` objects to merge server-side initial props with client-side fetched data. This ensures O(1) lookup complexity and prevents state race conditions by enforcing a single source of truth for game IDs.
+- **Tiered Fallback System:** Developed a resilience layer that intercepts `429 Too Many Requests` and `401 Unauthorized` status codes, gracefully pivoting to localized mock data. This ensures the dashboard remains interactive even during API outages.
+
+### Timezone-Anchored Fetching
+
+- **EST Synchronization:** Resolved "Date-Drift" bugs by anchoring all relative date calculations (Yesterday/Today/Tomorrow) to `America/New_York`. This synchronizes the application state with the NBA league calendar, eliminating UTC-rollover mismatches between the Server (SSR) and Client.
+- **Standardization Bridge:** Built a context-aware filtering engine that standardizes disparate date formats (ISO-8601 vs. HTML5 `YYYY-MM-DD`) into a unified queryable state using precision string slicing.
 
 ### Technical Challenges
 
