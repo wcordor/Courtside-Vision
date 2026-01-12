@@ -18,5 +18,8 @@ export async function getGamesByDate(date: string) {
         }
     } catch (error: any) {
         console.error("API Error - Falling back to Mocks:", error.message);
+        return MOCK_GAMES;
     }
+
+    return games;
 }

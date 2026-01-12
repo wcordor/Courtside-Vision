@@ -1,6 +1,7 @@
 'use client';
 import { Game } from "@/mockGames";
 import { useEffect, useState } from "react";
+import { getGamesByDate } from "./actions";
 
 const getRelativeDate = (offset: number) => {
 
@@ -76,7 +77,7 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
     }
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
 
     // Checks if games are loaded for selectedDate
     const hasData = initialGames.some(game => game.status.startsWith(selectedDate));
@@ -87,6 +88,16 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
         try {
           console.log("Fetching new data for:", selectedDate);
 
+          // Calls server action
+          const newGames = await getGamesByDate(selectedDate);
+
+          setExtraGames((prev) => {
+            const combined = [...prev, ...newGames];
+            return combined.filter((game, index, self) =>
+            index === self.findIndex((g) => g.id === game.id)
+            );
+          });
+
         } catch (error) {
           console.error("Fetch failed", error);
         } finally {
@@ -96,7 +107,7 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
 
       getMoreGames();
     }
-  }, [selectedDate, initialGames]);
+  }, [selectedDate, initialGames]);*/
 
   return (
 
