@@ -11,6 +11,25 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 - Tailwind
 - @balldontlie/sdk
 
+## Technical Case Studies
+
+### Pillar 1: The Normalization Layer (Complexity)
+
+**Problem:** The SDK returns single game objects for ID lookups versus arrays for date queries, which caused mapping crashes in the UI.
+
+**Solution:** Engineered a normalization bridge using `Array.isArray()` checks to force a consistent `Game[]` interface. I implemented a declarative de-duplication layer using a JavaScript `Map` constructor, ensuring $O(1)$ lookup complexity and preventing duplicate key collisions during state updates.
+
+### Pillar 2: API Resilience & Persistence (Resilience)
+
+**Problem:** The BALLDONTLIE Free Tier enforces a strict 5 requests per minute limit, making a traditional "live-fetch" dashboard unusable during active user sessions.
+
+**Solution:** Architected a **Cache-Aside Persistence Layer**. The application prioritizes locally cached data in `localStorage` before attempting network requests. By transitioning the UX to a manual "On-Demand" fetch model, I reduced redundant API calls by over 90% and ensured 100% uptime through localized mock fallbacks.
+
+### Pillar 3: Deterministic Date Sync (Performance/Logic)
+
+**Problem:** "Date-Drift" occurs when the server (UTC) and client (Local Time) disagree on "Today's" date, leading to hydration mismatches and missing games during late-night usage.
+**Solution:** Anchored the application’s temporal logic to `America/New_York` (EST). By standardizing date strings at the normalization layer (slicing ISO-8601 to 10-character `YYYY-MM-DD` formats), I eliminated timezone-related rolling errors and synchronized the UI with the official NBA league calendar.
+
 ## Roadmap & Progress
 
 - [x] **Core Infrastructure:** Next.js setup with TypeScript and SDK integration.

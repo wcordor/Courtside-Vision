@@ -126,3 +126,18 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 - **Symptom:** Console error: "The final argument passed to useEffect changed size between renders."
 - **Discovery:** Changing the dependency array from `[selectedDate, initialGames]` to `[selectedDate]` mid-session violated the Rule of Hooks regarding constant array size.
 - **Resolution:** Standardized the effect trigger to watch `selectedDate` exclusively and performed a hard reset to clear the hook's memory buffer.
+
+## 13 Jan 2026: Persistence Layer & UX Stability
+
+### Feature: Persistent Cache-Aside Pattern
+
+- **Implementation:** Integrated `localStorage` serialization to store NBA game data. This effectively bypasses the 5 req/min API limit for all previously viewed dates.
+
+### Architecture: Manual Fetching
+
+- **Strategy:** Transitioned from automatic `useEffect` triggers to a user-initiated "Fetch" action.
+- **Defensive Programming:** This approach prevents accidental rate-limit exhaustion during rapid date navigation and allows the user to decide when to spend an API request.
+
+### UX: Three-State UI Handling
+
+- **Refactor:** Implemented explicit logic to handle **Loading**, **Error (Rate Limit)**, and **Empty** states.

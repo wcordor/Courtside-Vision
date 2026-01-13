@@ -1,5 +1,5 @@
 'use client';
-import { Game } from "@/mockGames";
+import { Game, MOCK_GAMES } from "@/mockGames";
 import { useEffect, useState } from "react";
 import { getGamesByDate } from "./actions";
 
@@ -26,7 +26,24 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
   const [selectedTeam, setSelectedTeam] = useState("All Teams");
   const [isCustomDate, setIsCustomDate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [extraGames, setExtraGames] = useState<Game[]>([]);
+  const [extraGames, setExtraGames] = useState<Game[]>(() => {
+
+    // Checks if we are in browser or not
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("courtside_cache");
+
+      if (saved) {
+        const parsed = JSON.parse(saved) as Game[];
+
+        // Only keeps games that have finished
+        // Re-fetches unfinished games to get latest scores
+        return parsed.filter(game => game.status === 'Final');
+      }
+    }
+    return [];
+  });
+
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const allGames = Array.from(
     new Map([...initialGames, ...extraGames].map(game => [game.id, game])).values()
@@ -79,37 +96,42 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
     }
   };
 
-  useEffect(() => {
+  const handleManualFetch = async () => {
+    setIsLoading(true);
+    setFetchError(null);
+    try {
+      console.log("Fetching new data for:", selectedDate);
 
-    // Checks if games are loaded for selectedDate
-    const hasData = allGames.some(game => game.date.includes(selectedDate));
+      // Calls server action
+      const newGames = await getGamesByDate(selectedDate);
 
-    if (!hasData) {
-      const getMoreGames = async () => {
-        setIsLoading(true);
-        try {
-          console.log("Fetching new data for:", selectedDate);
+      const isRealData = newGames.length > 0 && newGames[0].date.includes(selectedDate);
 
-          // Calls server action
-          const newGames = await getGamesByDate(selectedDate);
+      if (isRealData) {
+        setExtraGames((prev) => {
+          const combined = [...prev, ...newGames];
 
-          setExtraGames((prev) => {
-            const combined = [...prev, ...newGames];
-            return combined.filter((game, index, self) =>
-            index === self.findIndex((g) => g.id === game.id)
-            );
-          });
+          const unique = Array.from(
+            new Map(combined.map((g) => [g.id, g])).values()
+          );
 
-        } catch (error) {
-          console.error("Fetch failed", error);
-        } finally {
-          setIsLoading(false);
-        }
-      };
+          if (typeof window !== "undefined") {
+            localStorage.setItem("courtside_cache", JSON.stringify(unique));
+          }
 
-      getMoreGames();
+          return unique;
+        });
+      }
+
+      else {
+        setFetchError("Rate limit reached or no data found. Please try again in 60s.");
+      }
+    } catch (error) {
+      setFetchError("An unexpected error occurred.")
+    } finally {
+      setIsLoading(false);
     }
-  }, [selectedDate]);
+  };
 
   return (
 
@@ -141,7 +163,26 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
           </select>
 
           {isCustomDate && (
-            <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}></input>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <input type="date" value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}
+                style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33',
+                padding: '4px', borderRadius: '4px' }}>                 
+              </input>
+              <button 
+                onClick={handleManualFetch}
+                disabled={isLoading}
+                style={{ 
+                  padding: '4px 12px', 
+                  backgroundColor: isLoading ? '#333' : '#007bff', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '4px',
+                  cursor: isLoading ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isLoading ? '...' : 'Fetch'}
+              </button>
+            </div>
           )}
           
           <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 8px', cursor: 'pointer',
@@ -164,9 +205,17 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
         </div>
       )}
 
-      {(!isLoading && filteredGames.length === 0) && (
+      {!isLoading && fetchError && (
+        <div style={{ color: '#ff4d4d', textAlign: 'center', padding: '1rem' }}>
+          {fetchError}
+        </div>
+      )}
+      
+      {!isLoading && !fetchError && filteredGames.length === 0 && (
         <div className="text-center p-4">
-          No games found for this date.
+          {allGames.some(game => game.date.includes(selectedDate))
+            ? "No games scheduled for this date." : "Select \"Fetch\" to see games."
+          }        
         </div>
       )}
 
