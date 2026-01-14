@@ -141,3 +141,27 @@ While previous logs identified the 429 (Too Many Requests) as the primary bottle
 ### UX: Three-State UI Handling
 
 - **Refactor:** Implemented explicit logic to handle **Loading**, **Error (Rate Limit)**, and **Empty** states.
+
+## 14 Jan 2026: State Synchronization & Resource Optimization
+
+### Issue: Persistent Error Leakage
+
+- **Symptom:** The "Rate Limit Reached" message remained visible even when toggling back to a valid, cached "Today" view.
+
+- **Root Cause:** State pollution. The `fetchError` state was not being cleared during view transitions, leading to a UI that incorrectly signaled failure while simultaneously displaying valid data.
+
+- **Resolution:** Implemented Explicit State Cleanup within the navigation handler. By ensuring the error state is nullified during view toggles, the system maintains a deterministic UI that accurately reflects the current data source's status.
+
+### Architecture: Network Request Coordination
+
+- **Constraint:** BALLDONTLIE Free Tier (5 req/min).
+
+- **Optimization Strategy:** Initial Load Reduction: Standardized `page.tsx` to fetch a single high-priority date (`Today`) instead of the previous 3-date array, preserving 80% of the minute-by-minute request budget for user-initiated queries.
+
+- **Request Guarding:** Engineered a "Double-Gate" validation check in the `handleManualFetch` logic. The system now cross-references the `selectedDate` against the local state and `localStorage` cache before authorizing an asynchronous network call.
+
+- **Architectural Shift:** Moved from "Hopeful Fetching" to **Defensive Request Budgeting**, a critical requirement for scaling applications with limited or expensive upstream resources.
+
+### Tech Stack Refinement
+
+- **Next.js Cache Tuning:** Increased the `revalidate` window to `3600` (1 hour) to prevent the framework's background revalidation tasks from consuming the application's strict API quota.

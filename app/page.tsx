@@ -2,7 +2,7 @@ import { BalldontlieAPI } from "@balldontlie/sdk";
 import { MOCK_GAMES, Game } from "@/mockGames";
 import Dashboard from "./dashboard";
 
-export const revalidate = 60; // Refresh data every 60 seconds at most
+export const revalidate = 3600; // Refresh data every hour at most
 
 export default async function HomePage() {
   const apiKey = process.env.BALLDONTLIE_API_KEY || "";
@@ -31,10 +31,7 @@ export default async function HomePage() {
     };
 
     const today = getRelativeDate(0);
-    const yesterday = getRelativeDate(-1);
-    const tomorrow = getRelativeDate(1);
-
-    const dateStrings = [yesterday, today, tomorrow];
+    const dateStrings = [today];
 
     const dates = dateStrings;
     const gameResponse = await api.nba.getGames({ dates });

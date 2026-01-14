@@ -92,11 +92,20 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
     }
     else {
       setIsCustomDate(false);
+      setFetchError(null);
       setSelectedDate(value);
     }
   };
 
   const handleManualFetch = async () => {
+
+    // Checks if data is already in state
+    const alreadyLoaded = allGames.some(game => game.date.includes(selectedDate));
+
+    if (alreadyLoaded) {
+      console.log("Date already loaded. Skipping API call.");
+      return;
+    }
     setIsLoading(true);
     setFetchError(null);
     try {
@@ -158,8 +167,7 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
 
           <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 8px', cursor: 'pointer',
             textAlign: 'center', borderRadius: '4px' }} value={isCustomDate ? "custom" : selectedDate} onChange={handleDateChange}>
-              <option value={getRelativeDate(-1)}>Yesterday</option><option value={getRelativeDate(0)}>Today</option><option value={getRelativeDate(1)}>Tomorrow</option>
-                <option value="custom">Specific Date</option>
+              <option value={getRelativeDate(0)}>Today</option><option value="custom">Specific Date</option>
           </select>
 
           {isCustomDate && (
@@ -187,7 +195,7 @@ export default function Dashboard({ initialGames, isUsingMock }: { initialGames:
           
           <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 8px', cursor: 'pointer',
             textAlign: 'center', borderRadius: '4px' }}>
-            <option>All Teams</option><option>Atlanta Hawks</option> <option>Specific Date</option> {/* add in all 30 teams */}
+            <option>All Teams</option><option>Atlanta Hawks</option> <option>Specific Date</option>
           </select>
 
           <select style={{ background: '#1a1a1a', color: 'white', border: '1px solid #ffffff33', appearance: 'none', padding: '4px 16px', cursor: 'pointer',

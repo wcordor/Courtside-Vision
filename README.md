@@ -2,14 +2,14 @@
 
 ## What is it?
 
-Courtside Vision is an NBA analytics dashboard designed to help users compare team match-ups and player performance using the BALLDONTLIE API. It leverages TypeScript for robust data handling and features a custom fallback system to ensure a seamless user experience even when hitting external API rate limits.
+Courtside Vision is an NBA analytics dashboard engineered for high-integrity data handling and system resilience. Built to simulate mission-critical environments, it features a custom **Cache-Aside Persistence Layer** and a **Deterministic Normalization Bridge** to maintain 100% uptime and data accuracy despite strict upstream API constraints.
 
 ## Tech Stack
 
-- Next.js
-- TypeScript
-- Tailwind
-- @balldontlie/sdk
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript (Strict Mode)
+- **Styling:** Tailwind
+- **Data:** @balldontlie/sdk / REST API
 
 ## Technical Case Studies
 
@@ -32,30 +32,15 @@ Courtside Vision is an NBA analytics dashboard designed to help users compare te
 
 ## Roadmap & Progress
 
-- [x] **Core Infrastructure:** Next.js setup with TypeScript and SDK integration.
-- [x] **Data Resilience:** Hybrid Mock/Live data system to bypass 429 Rate Limits.
-- [x] **Polymorphic Data Handling:** Engineered a normalization layer for Single (Object) vs. Multiple (Array) game responses.
-- [x] **Dynamic Matchboard:** Engineered context-aware components that dynamically render scores, clocks, and statuses based on real-time game states.
-- [ ] **Advanced Filtering:** Team-specific and date-range querying for the dashboard.
-  - *Completed: Built a context-aware filtering engine that standardizes disparate date formats (ISO-8601 vs. HTML5) into unified queryable state.*
+- [x] **Core Infrastructure:** Next.js setup with strict TypeScript and SDK integration.
+- [x] **Data Resilience:** Multi-layered Cache-Aside system to handle 429 Rate Limits.
+- [x] **Polymorphic Data Handling:** Normalization bridge for disparate API response shapes.
+- [x] **Dynamic Matchboard:** Context-aware components with real-time state rendering.
+- [ ] **Advanced Filtering:** Team-specific querying (Logic engine built, UI pending).
 - [ ] **On-Demand Data Retrieval:** Implementing Server Actions to fetch historical data dynamically as users navigate the calendar.
-- [ ] **Matchup Trend & Comparison Engine:** Comprehensive analysis tool that aggregates rolling 5-game performance metrics and head-to-head opponent stats. This engine utilizes multiple asynchronous data streams to provide a "Matchup Strength" indicator.
-- [ ] **Mobile-First Design:** Fully responsive UI refactor using Tailwind CSS.
+- [ ] **Matchup Trend Engine:** Rolling 5-game performance aggregation and H2H strength indicators.
+- [ ] **Mobile-First Design:** Fully responsive UI refactor.
 
-## Hybrid Data Resilience & Polymorphic Data Handling
+## ⚙️ Performance & Scalability
 
-To ensure 100% uptime despite the strict 5 req/min API limit, I engineered a multi-layered data strategy:
-
-- **Polymorphic Data Normalization:** Implemented a de-duplication layer using JavaScript `Map` objects to merge server-side initial props with client-side fetched data. This ensures O(1) lookup complexity and prevents state race conditions by enforcing a single source of truth for game IDs.
-- **Tiered Fallback System:** Developed a resilience layer that intercepts `429 Too Many Requests` and `401 Unauthorized` status codes, gracefully pivoting to localized mock data. This ensures the dashboard remains interactive even during API outages.
-
-### Timezone-Anchored Fetching
-
-- **EST Synchronization:** Resolved "Date-Drift" bugs by anchoring all relative date calculations (Yesterday/Today/Tomorrow) to `America/New_York`. This synchronizes the application state with the NBA league calendar, eliminating UTC-rollover mismatches between the Server (SSR) and Client.
-- **Standardization Bridge:** Built a context-aware filtering engine that standardizes disparate date formats (ISO-8601 vs. HTML5 `YYYY-MM-DD`) into a unified queryable state using precision string slicing.
-
-### Technical Challenges
-
-**Date Normalization Bridge:** One of the primary challenges was reconciling the data formats between the BALLDONTLIE API and the HTML5 browser environment. The API returns full ISO-8601 timestamps, while the native browser calendar returns a simplified `YYYY-MM-DD` string. To bridge this gap, I architected a normalization layer within the client-side filter that slices incoming API data to match the 10-character ISO standard, ensuring 100% filter accuracy regardless of the user's local timezone or the API's time precision.
-
-**Performance & Scalability (ISR):** To ensure the dashboard remains highly performant while serving live sports data, I integrated Incremental Static Regeneration (ISR). By setting a 60-second revalidation window, the application serves optimized static pages to users while background-fetching fresh scores, effectively balancing data real-time accuracy with server efficiency.
+To balance data freshness with resource constraints, the application utilizes **Incremental Static Regeneration (ISR)**. I implemented a customized revalidation window of **3600 seconds**, strategically budgeting API requests to prioritize user-initiated historical queries over background automated refreshes.
